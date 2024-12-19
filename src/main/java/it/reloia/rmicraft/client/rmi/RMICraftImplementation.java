@@ -22,6 +22,9 @@ public class RMICraftImplementation implements RMICraftInterface {
 
     @Override
     public boolean checkConnection() throws RemoteException {
+        if (client == null || client.player == null)
+            throw new RemoteException("Waiting for player to join a world");
+
         return true;
     }
 
