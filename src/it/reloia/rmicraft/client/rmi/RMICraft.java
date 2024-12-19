@@ -22,11 +22,22 @@ public class RMICraft {
         rmiCraft.userConnected();
     }
 
-    public boolean isConnected() throws RemoteException {
-        return rmiCraft.checkConnection();
+    public boolean isConnected() {
+        try {
+            return rmiCraft.checkConnection();
+        } catch (RemoteException e) {
+            return false;
+        }
     }
 
     public void sendChatMessage(String message) throws RemoteException {
+        if (rmiCraft == null)
+            throw new RemoteException("Not connected to server");
+        if (!isConnected())
+            throw new RemoteException("Connection lost");
+        if (message.isEmpty())
+            return;
+
         rmiCraft.sendChatMessage(message);
     }
 

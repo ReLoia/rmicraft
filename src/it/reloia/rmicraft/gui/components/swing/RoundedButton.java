@@ -1,5 +1,6 @@
 package it.reloia.rmicraft.gui.components.swing;
 
+// gli import a stella sono usati solo per swing e awt perchè sono molto verbosi (avrei 300 import)
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;

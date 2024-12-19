@@ -5,6 +5,6 @@ import java.rmi.RemoteException;
 
 public interface RMICraftInterface extends Remote {
     void userConnected() throws RemoteException;
-    boolean checkConnection();
+    boolean checkConnection() throws RemoteException;
     void sendChatMessage(String message) throws RemoteException;
 }

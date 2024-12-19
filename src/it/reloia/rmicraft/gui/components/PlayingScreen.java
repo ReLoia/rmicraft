@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 
 public class PlayingScreen extends JPanel {
     JTextField chatField;
+    Thread checkConnectionRunner;
     
     public PlayingScreen() {
         this.setBounds(0, 0, 800, 600);
@@ -42,7 +43,6 @@ public class PlayingScreen extends JPanel {
         JButton sendChatButton = getSendButton();
         this.add(sendChatButton);
 
-        
         JButton exitButton = exitButton();
         this.add(exitButton);
 
@@ -62,6 +62,30 @@ public class PlayingScreen extends JPanel {
                 RMICraftClientGUI.INSTANCE.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
             }
         });
+
+        checkConnectionRunner = new Thread(() -> {
+            while (!Thread.currentThread().isInterrupted()) {
+                try {
+                    Thread.sleep(5000);
+                    if (checkConnectionAndQuit())
+                        break;
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        checkConnectionRunner.start();
+    }
+
+    private boolean checkConnectionAndQuit() {
+        if (!RMICraft.INSTANCE.isConnected()) {
+            RMICraftClientGUI.INSTANCE.changePanel(new MainMenu());
+            RMICraft.INSTANCE.disconnect();
+            checkConnectionRunner.interrupt();
+            return true;
+        }
+
+        return false;
     }
     
     private JButton getSendButton() {
@@ -69,8 +93,10 @@ public class PlayingScreen extends JPanel {
         sendButton.setBounds(800 / 2 + 400 / 2 - 80 / 2, 220, 80, 40);
         sendButton.setBackground(new Color(106, 25, 25));
         sendButton.setForeground(new Color(255, 255, 255));
-        sendButton.addActionListener(e -> {
+        sendButton.addActionListener(_ -> {
             try {
+                checkConnectionAndQuit();
+
                 RMICraft.INSTANCE.sendChatMessage(chatField.getText());
             } catch (RemoteException ex) {
                 throw new RuntimeException(ex);
@@ -87,8 +113,10 @@ public class PlayingScreen extends JPanel {
         chatField.setBackground(new Color(255, 255, 255));
         chatField.setForeground(new Color(0, 0, 0));
         chatField.setFont(new Font("Arial", Font.PLAIN, 22));
-        chatField.addActionListener(e -> {
+        chatField.addActionListener(_ -> {
             try {
+                checkConnectionAndQuit();
+
                 RMICraft.INSTANCE.sendChatMessage(chatField.getText());
             } catch (RemoteException ex) {
                 throw new RuntimeException(ex);
@@ -103,7 +131,7 @@ public class PlayingScreen extends JPanel {
         startButton.setBounds(800 / 2 - 300 / 2, 480, 300, 40);
         startButton.setBackground(new Color(106, 25, 25));
         startButton.setForeground(new Color(255, 255, 255));
-        startButton.addActionListener(e -> {
+        startButton.addActionListener(_ -> {
             RMICraftClientGUI.INSTANCE.changePanel(new MainMenu());
             RMICraft.INSTANCE.disconnect();
         });

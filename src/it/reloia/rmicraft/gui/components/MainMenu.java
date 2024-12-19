@@ -105,7 +105,7 @@ public class MainMenu extends JPanel {
         startButton.setBounds(x, y, width, height);
         startButton.setBackground(new Color(55, 47, 47));
         startButton.setForeground(new Color(255, 255, 255));
-        startButton.addActionListener(e -> {
+        startButton.addActionListener(_ -> {
             try {
                 RMICraft.INSTANCE.connect();
 
@@ -114,10 +114,12 @@ public class MainMenu extends JPanel {
                 String msg = ex.getMessage();
                 if (msg.contains("Connection refused")) {
                     setError("Connection refused\nIs the server running?");
+                } else if (msg.contains("Waiting for player to join a world")) {
+                    setError("Waiting for player to join a world");
                 } else {
                     setError(ex.getMessage());
+                    ex.printStackTrace();
                 }
-                ex.printStackTrace();
             }
         });
 
@@ -130,7 +132,7 @@ public class MainMenu extends JPanel {
         startButton.setBounds(x, y, width, height);
         startButton.setBackground(new Color(106, 25, 25));
         startButton.setForeground(new Color(255, 255, 255));
-        startButton.addActionListener(e -> System.exit(0));
+        startButton.addActionListener(_ -> System.exit(0));
 
         return startButton;
     }
