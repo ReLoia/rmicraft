@@ -29,4 +29,5 @@ bin/
 .DS_Store
 
 .idea
+rmicraft-client.iml
 build
